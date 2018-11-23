@@ -1,9 +1,13 @@
 package com.example.ungja.simpletodo;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import static com.example.ungja.simpletodo.MainActivity.ITEM_POSITION;
@@ -15,6 +19,11 @@ public class EditItemActivity extends AppCompatActivity {
     EditText etItemText;
     // position of edited item in list
     int position;
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +37,10 @@ public class EditItemActivity extends AppCompatActivity {
         position = getIntent().getIntExtra(ITEM_POSITION, 0);
         // update the title bar of the activity
         getSupportActionBar().setTitle("Edit Item");
+        etItemText.requestFocus();
+        if(etItemText.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
     // handler for save button
@@ -41,6 +54,7 @@ public class EditItemActivity extends AppCompatActivity {
         // set the intent as the result of the activity
         setResult(RESULT_OK, i);
         // close the activity and redirect to main
+        hideKeyboardFrom(EditItemActivity.this, v);
         finish();
     }
 }

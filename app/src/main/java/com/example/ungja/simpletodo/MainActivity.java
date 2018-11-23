@@ -1,11 +1,17 @@
 package com.example.ungja.simpletodo;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -29,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
     ListView lvItems;
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,19 +66,52 @@ public class MainActivity extends AppCompatActivity {
         itemsAdapter.add(itemText);
         etNewItem.setText("");
         writeItems();
+        hideKeyboardFrom(MainActivity.this, v);
         Toast.makeText(getApplicationContext(), "Item added to list", Toast.LENGTH_SHORT).show();
     }
 
     private void setupListViewListener() {
+
         Log.i("MainActivity", "Setting up listener on list view");
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
+            String deleteItem = "";
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("MainActivity","Item removed from list: " + position);
-                items.remove(position);
-                itemsAdapter.notifyDataSetChanged();
-                writeItems();
+
+                hideKeyboardFrom(MainActivity.this, view);
+
+                // save the string we want to potentially remove
+                deleteItem = items.get(position);
+
+                // create a new alert dialog to confirm with user if s/he wants to delete the item
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+
+
+                // set title
+                alertDialog.setTitle("Are you sure?");
+
+                // set confirm or "Delete" button to remove 'deleteItem' when pressed
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.i("MainActivity", "Item removed from list: ");
+                        items.remove(deleteItem);
+                        itemsAdapter.notifyDataSetChanged();
+                        writeItems();
+                    }
+                });
+
+                // set negative/"Cancel" button to do nothing and return to MainActivity
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // does not remove deleteItem
+                        // only exits the alert dialog
+                    }
+                });
+
+                new Dialog(getApplicationContext());
+                alertDialog.show();
+
                 return true;
             }
         });
@@ -76,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 // create the new activity
                 Intent i = new Intent(MainActivity.this, EditItemActivity.class);
                 // pass the data being edited
