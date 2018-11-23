@@ -34,7 +34,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Implemented CRUD via a todo list
+Implemented CRUD through a todo list
 
 ## License
 
