@@ -20,7 +20,9 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [x] Added alert dialog to confirm if the user wants to delete the item
+* [x] Keyboard disappears when an item or button is pressed
+* [x] Autofocus on edit-text when tranferring to EditActivity
 
 ## Video Walkthrough
 
@@ -32,7 +34,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Another functionality to improve the app would be to confirm if the user actually wants to remove an item before doing so
+Implemented CRUD via a todo list
 
 ## License
 
